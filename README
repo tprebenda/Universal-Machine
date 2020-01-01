@@ -1,0 +1,139 @@
+Title: HW6 um
+Name: Troy Prebenda (tprebe01), Tim Holt (tholt02)
+COMP 40 Fall 2019
+
+-------------------------------------------------------------------------------
+                            ACKNOWLEDGMENTS 
+-------------------------------------------------------------------------------
+
+            Some help from COMP 40 Piazza posts & TAs (thank you!):
+                - Danielle
+                - Josh
+
+            Also used fileio and bitpack idioms from
+            Noah Mendelsohn's solutions
+
+-------------------------------------------------------------------------------
+                             IMPLEMENTATION
+-------------------------------------------------------------------------------
+
+            Everything from the spec was correctly implemented
+            to the best of our knowlegde.
+
+
+-------------------------------------------------------------------------------
+                              ARCHITECTURE
+-------------------------------------------------------------------------------
+
+            memory - our memory interface manages the
+            segemented memory portion of the UM. The segments
+            of memory are stored as sequences. Given that the
+            memory struct is defined in the .h file we do not 
+            think that this module maintains any secrets.
+
+            input - this module reads instructions from a .um 
+            file and loads them into segment 0 of memory. 
+            This module uses the memory module to load instructions.
+
+            unpack - this module inteprets 32 bit words and reads instructions
+            into instruction structs. This module maintains the secret of where
+            within a word the values are located. This module utilized the
+            Bitpack module from the Arith assignment.
+
+            execute -This module manages register values and performs 
+            instructions. This module maintains the secret that instructions 
+            are stored as 32 bit words within segment 0 because it only uses 
+            the program counter to determine what instruction is to be read 
+            next. This module utilizes the unpack module and the memory module.
+
+            um - this is our main which reads in instructions from a .um
+            using the input module and uses the execute module to execute
+            intructions. 
+
+
+
+-------------------------------------------------------------------------------
+                                TIME SPENT
+-------------------------------------------------------------------------------
+
+            we spent approximately 4 hours analyzing the assignment, 4 hours 
+            preparing our design, and 10 hours solving the problems after our
+            analysis.
+
+
+-------------------------------------------------------------------------------
+                          DEPARTURES FROM DESIGN
+-------------------------------------------------------------------------------
+
+            The only major departure we made from our design is that when
+            implementing our UM we desided we no longer needed a counter
+            variable for assigning new segment IDs.
+
+-------------------------------------------------------------------------------
+                    TIME TO COMPUTE 50,000,000 INSTRUCTIONS
+-------------------------------------------------------------------------------
+To compute 50,000,000 (loadval) instructions while running ./um remotely
+(from my laptop at home), it will take about 12 seconds. We know this by
+writing an emit test that produces 50,000,000 loadval instructions, and then
+running our um implementation on the corresponding .um file.
+On the Halligan computers, our um implementation would take less time, but
+my execution is slightly delayed because it was performed remotely. 
+
+
+-------------------------------------------------------------------------------
+                                UM TESTS
+-------------------------------------------------------------------------------
+    
+LOADVAL (loadX.um):
+    This tests the load value instruction by loading a hardcoded value ('X') 
+    into a register and then outputting that value.
+
+ADD (add.um):
+    This tests the addition instruction by adding multiple different values
+    to different registers and printing the sums
+
+ALL_ASCII (all_ascii.um):
+    This tests both the input and output instructions by inputting all 256
+    ASCII characters from the file all_ascii.0, storing them in registers,
+    and printing them back out to stdout (all_ascii.1)
+
+CMOVE (cmove.um):
+    This tests the conditional move instruction by loading two values into two
+    separate registers, and then calling cmove in two separate conditions-
+        1) r[C] = 0 : no conditional move occurs
+        2) r[C] != 0 : conditional move occurs
+    We output the value that would potentially be moved in both cases to make
+    sure that the move only occurs when its supposed to.
+
+HALT (halt-verbose.um):
+    This tests the halt instruction by calling halt at the very start of the
+    test, and then loading/outputting values. If halt works correctly, the 
+    program should not output anything (because it will stop before any of the
+    load/output instructions)
+
+
+map_seg.um      - tests the Map Segment instruction by mapping 3 new segments
+                  with 4 words in each and outputs the segIDs
+
+mult_div.um     - tests the multiplication and division instructions by loading
+                  known values into registers, multiplying and then outputting
+                  the product, and dividing and outputting the result so they
+                  can be checked against expected results.
+
+nand.um         - tests the nand instruction by nanding two known values and
+                  outputing the result so that it can be checked against the
+                  known output
+
+sload_sstore.um - tests the segmented load and store functions by mapping a new
+                  segment, storing a known val and loading that val into a
+                  register and then outputting the value.
+
+unmap_seg.um    - tests the unmap segment instruction by mapping three segments
+                  and then unmapping them and outputting their id.
+
+load_prog.um    - tests the load program instruction by mapping a new segment,
+                  storing it with instructions from segment 0, and then loading
+                  that new segment in segment 0 and executing. The load
+                  program effectively acts as a jump here and skips some
+                  instructions that would output a different value if the
+                  load program was unsucessful.
