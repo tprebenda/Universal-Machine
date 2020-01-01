@@ -2,6 +2,10 @@ Title: HW6 um
 Name: Troy Prebenda (tprebe01), Tim Holt (tholt02)
 COMP 40 Fall 2019
 
+
+This is an implementation of a slightly simplified 32-bit Universal Machine,
+an assignment of the Machine Programming and Structure course at Tufts University.
+
 -------------------------------------------------------------------------------
                             ACKNOWLEDGMENTS 
 -------------------------------------------------------------------------------
